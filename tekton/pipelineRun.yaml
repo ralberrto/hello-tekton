@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: hello-tekton
+  namespace: hello-tekton
+spec:
+  taskRunTemplate:
+    serviceAccountName: hello-tekton
+  workspaces:
+  - name: objects
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: ocs-storagecluster-cephfs
+  pipelineRef:
+    name: say-hello
+  params:
+  - name: name
+    value: Asha

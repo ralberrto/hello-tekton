@@ -1,0 +1,3 @@
+FROM docker-na-public.artifactory.swg-devops.com/hyc-cp4d-team-bootstrap-2-docker-local/gcc:latest
+COPY source /app/source
+

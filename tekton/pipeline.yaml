@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: say-hello
+  namespace: hello-tekton
+spec:
+  workspaces:
+  - name: objects
+  params:
+  - name: name
+    type: string
+    default: world
+  tasks:
+  - name: compile-source
+    displayName: Compile source code
+    taskRef:
+      name: compiler
+    params:
+    - name: name
+      value: "$(params.name)"
+    workspaces:
+    - name: objects
+  - name: execute-object
+    displayName: Execute compiled code
+    taskRef:
+      name: executer
+    params:
+    - name: name
+      value: "$(params.name)"
+    workspaces:
+    - name: objects
+    runAfter:
+    - compile-source
+#  - name: calculate-hash
+#    displayName: Calculate object hash
+#    taskRef:
+#      name: ansible-agent
+#    params:
+#    - name: extra-vars
+#      value: "version=$(params.version) project_cp4aiops=$(params.namespace) cp4aiops_size=$(params.size)"
+#    - name: tags
+#      value: check1
+#    workspaces:
+#    - name: ansible-writable
+#    runAfter:
+#    - deploy-prerequisites

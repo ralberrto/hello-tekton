@@ -1,0 +1,4 @@
+FROM docker-na-public.artifactory.swg-devops.com/hyc-cp4d-team-bootstrap-2-docker-local/ubi9:latest
+COPY bin/dump-hash.sh /app/bin/
+RUN ["chmod", "uog+x", "/app/bin/dump-hash.sh"]
+ENV PATH=$PATH:/app/bin

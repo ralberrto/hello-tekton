@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: executer
+  namespace: hello-tekton
+spec:
+  stepTemplate:
+    env:
+    - name: HOME
+      value: /tekton/home
+  params:
+  - name: name
+    type: string
+  steps:
+  - name: check-hash
+    image: docker-na-public.artifactory.swg-devops.com/hyc-cp4d-team-bootstrap-2-docker-local/alpine@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099
+    command:
+    - sha256sum
+    args:
+    - -c
+    - /mnt/workspace/hello-hash.txt
+  - name: execute
+    image: docker-na-public.artifactory.swg-devops.com/hyc-cp4d-team-bootstrap-2-docker-local/dump-hash@sha256:f62c022a055e3f333ae8afb6014d76cd9aa1236fd20b0c9fb90a3d5c4d388189
+    command:
+    - /mnt/workspace/hello
+    args:
+    - $(params.name)
+  workspaces:
+  - name: objects
+    description: Volume to dump compiled executables to
+    mountPath: /mnt/workspace

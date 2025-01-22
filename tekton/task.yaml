@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: compiler
+  namespace: hello-tekton
+spec:
+  stepTemplate:
+    env:
+    - name: HOME
+      value: /tekton/home
+  steps:
+  - name: compile
+    image: docker-na-public.artifactory.swg-devops.com/hyc-cp4d-team-bootstrap-2-docker-local/source@sha256:dd938beb5a7122b206d668157956208c7cd9cde64908847dfbcc654d91bdc042
+    command: 
+    - gcc
+    args:
+    - -std=c99
+    - -o
+    - /mnt/workspace/hello
+    - /app/source/hello-world.c
+  - name: calculate-hash
+    image: docker-na-public.artifactory.swg-devops.com/hyc-cp4d-team-bootstrap-2-docker-local/dump-hash@sha256:f62c022a055e3f333ae8afb6014d76cd9aa1236fd20b0c9fb90a3d5c4d388189
+    command:
+    - /app/bin/dump-hash.sh
+    args:
+    - -b
+    - /mnt/workspace/hello
+    - /mnt/workspace/hello-hash.txt
+  workspaces:
+  - name: objects
+    description: Volume to dump compiled executables to
+    mountPath: /mnt/workspace
